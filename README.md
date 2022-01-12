@@ -108,7 +108,7 @@ char *jsonExample = "{\"widget\": {\n"
             .bindJson(jsonExample)  // add json string to request
             .execute(&http);
     
-    HTTPParser httpParser = getHttpParserInstance();
+    HTTPParser *httpParser = getHttpParserInstance();
     parseHttpBuffer(response.rawResponse, httpParser, HTTP_RESPONSE);
     parseHttpHeaders(httpParser, response.rawResponse);
     
@@ -118,7 +118,7 @@ char *jsonExample = "{\"widget\": {\n"
         printf("[%s] -> [%s]\n", iterator.key, (char *) iterator.value);
     }
 
-    printf("%s\n", httpParser.messageBody);
+    printf("%s\n", httpParser->messageBody);
     while (1) {
     }
 ```

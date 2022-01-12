@@ -5,8 +5,8 @@
 
 static WiFi *wifiInstance = NULL;
 
-static inline uint16_t getPortOrDefault(URL *url);
-static HTTPResponse sendRequestCallback(URL *url, char *requestBuffer, uint32_t dataLength, bool isBlockingExecute);
+static inline uint16_t getPortOrDefault(URLParser *url);
+static HTTPResponse sendRequestCallback(URLParser *url, const char *requestBuffer, uint32_t dataLength, bool isBlockingExecute);
 static void removeESP8266DataMarker(char *rawResponse, const char *marker);
 
 
@@ -14,7 +14,7 @@ HTTP getESP8266HttpClient(WiFi *wifi) {
     HTTP http = { NULL };
     if (wifi != NULL) {
         wifiInstance = wifi;
-        http = initHttpInstance(wifi->request->requestBody, wifi->request->bufferSize);
+        http = initHTTPInstance(wifi->request->requestBody, wifi->request->bufferSize);
         registerHttpCallback(&http, sendRequestCallback);
     }
     return http;
@@ -25,7 +25,7 @@ void cleanESP8266Response(char *rawResponse) {
     removeESP8266DataMarker(rawResponse, "\nCLOSED");
 }
 
-HTTPResponse sendRequestCallback(URL *url, char *requestBuffer, uint32_t dataLength, bool isBlockingExecute) {
+HTTPResponse sendRequestCallback(URLParser *url, const char *requestBuffer, uint32_t dataLength, bool isBlockingExecute) {
     HTTPResponse httpResponse = {HTTP_NO_STATUS, NULL, NULL};
     if (wifiInstance != NULL) {
         httpResponse.rawResponse = wifiInstance->response->responseBody;
@@ -67,6 +67,6 @@ static void removeESP8266DataMarker(char *rawResponse, const char *marker) {
     }
 }
 
-static inline uint16_t getPortOrDefault(URL *url) {
+static inline uint16_t getPortOrDefault(URLParser *url) {
     return url->port > 0 ? url->port : HTTP_DEFAULT_PORT;
 }
